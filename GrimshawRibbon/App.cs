@@ -22,7 +22,7 @@ namespace GrimshawRibbon
             application.CreateRibbonTab(tabName);
 
             // Add a new ribbon panel
-            RibbonPanel ribbonPanel = application.CreateRibbonPanel(tabName, "Надстройки"); //подпись под кнопками
+            RibbonPanel ribbonPanel = application.CreateRibbonPanel(tabName, "Надстройки МРГТ v.0.1"); //подпись под кнопками
 
             // Get dll assembly path
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
@@ -35,6 +35,8 @@ namespace GrimshawRibbon
 
             BitmapImage pb1Image = new BitmapImage(new Uri("pack://application:,,,/GrimshawRibbon;component/Resources/totalLength.png"));
             pb1.LargeImage = pb1Image;
+
+
 
             //попробуем создать еще одну кнопку
             ribbonPanel.AddSeparator(); //разделитель между кнопками
@@ -50,6 +52,23 @@ namespace GrimshawRibbon
 
             BitmapImage pb2Image = new BitmapImage(new Uri("pack://application:,,,/GrimshawRibbon;component/Resources/totalLength.png"));
             pb2.LargeImage = pb2Image;
+
+
+
+            //попробуем создать еще одну кнопку
+            ribbonPanel.AddSeparator(); //разделитель между кнопками
+
+            // create push button for Section
+            PushButtonData b1Data3 = new PushButtonData("cmdCreateSection", "Разрез по стене", thisAssemblyPath, "GrimshawRibbon3.CreateSection");
+
+            PushButton pb3 = ribbonPanel.AddItem(b1Data3) as PushButton;
+            pb3.ToolTip = "Разрезы";
+
+            BitmapImage pb3Image = new BitmapImage(new Uri("pack://application:,,,/GrimshawRibbon;component/Resources/favicon.png"));
+            pb3.LargeImage = pb3Image;
+            
+
+
         }
 
         public Result OnShutdown(UIControlledApplication application)

@@ -123,7 +123,7 @@ namespace GrimshawRibbon3
         /// </summary>
         BoundingBoxXYZ GetSectionViewParallelToWall(Wall wall)
         {
-            LocationCurve lc = wall.Location as LocationCurve; 
+            LocationCurve lc = wall.Location as LocationCurve;
 
             Curve curve = lc.Curve; //кривая стены
 
@@ -145,11 +145,11 @@ namespace GrimshawRibbon3
             double h = maxZ - minZ; //высота стены
             double d = wall.WallType.Width; //толщина стены
 
-            double offset =  d; //смещение разреза
+            double offset = d; //смещение разреза
 
-            XYZ min = new XYZ(-w*0.5-0.1 , -0.1, -offset);
+            XYZ min = new XYZ(-w * 0.5 - 0.1, -0.1, -offset);
             //XYZ max = new XYZ( w, maxZ + offset, 0 ); // section view dotted line in center of wall
-            XYZ max = new XYZ(w*0.5+0.1, maxZ-minZ+0.1 , offset); // section view dotted line offset from center of wall
+            XYZ max = new XYZ(w * 0.5 + 0.1, maxZ - minZ + 0.1, offset); // section view dotted line offset from center of wall
 
             XYZ midpoint = p + 0.5 * v;
             XYZ walldir = v.Normalize(); //Returns a new UV whose coordinates are the normalized values from this vector.
