@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5E9F866-5EEF-4CD5-BE98-9AF9550D44F5}</ProjectGuid>
+    <ProjectGuid>{0C4F2EB9-4F76-4C14-A4E5-56E448185E7B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UiCs</RootNamespace>
-    <AssemblyName>UiCs</AssemblyName>
+    <RootNamespace>IntroCs</RootNamespace>
+    <AssemblyName>IntroCs</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,7 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
     <Reference Include="RevitAPI">
       <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -48,39 +47,16 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="1_Ribbon.cs" />
+    <Compile Include="1_HelloWorld.cs" />
+    <Compile Include="2_DbElement.cs" />
+    <Compile Include="7_SharedParameter.cs" />
+    <Compile Include="3_ElementFiltering.cs" />
+    <Compile Include="4_ElementModification.cs.cs" />
+    <Compile Include="6_ExtensibleStorage.cs" />
+    <Compile Include="5_ModelCreation.cs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="UiCs.addin" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IntroCs\IntroCs.csproj">
-      <Project>{0c4f2eb9-4f76-4c14-a4e5-56e448185e7b}</Project>
-      <Name>IntroCs</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images2\Annotation.ico" />
-    <Resource Include="Images2\Basics.ico" />
-    <Resource Include="Images2\DataExchange.ico" />
-    <Resource Include="Images2\Elements.ico" />
-    <Resource Include="Images2\Families.ico" />
-    <Resource Include="Images2\Geometry.ico" />
-    <Resource Include="Images2\House.ico" />
-    <Resource Include="Images2\ImgCommandArguments.png" />
-    <Resource Include="Images2\ImgCommandArgumentsSmall.png" />
-    <Resource Include="Images2\ImgCommandSmall.png" />
-    <Resource Include="Images2\ImgHelloWorld.png" />
-    <Resource Include="Images2\ImgHelloWorldSmall.png" />
-    <Resource Include="Images2\MEP.ico" />
-    <Resource Include="Images2\Parameters.ico" />
-    <Resource Include="Images2\RoomsAndSpaces.ico" />
-    <Resource Include="Images2\Structure.ico" />
-    <Resource Include="Images2\World.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
