@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiCs", "UiCs\UiCs.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntroCs", "IntroCs\IntroCs.csproj", "{0C4F2EB9-4F76-4C14-A4E5-56E448185E7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateSectionInRoom", "CreateSectionInRoom\CreateSectionInRoom.csproj", "{B83CB7BA-EABC-49DC-8927-DD0945256C91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateFloorByRoom", "GenerateFloorByRoom\GenerateFloorByRoom.csproj", "{4E45049F-75C6-4411-8B6E-F683CD4FB784}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,14 @@ Global
 		{0C4F2EB9-4F76-4C14-A4E5-56E448185E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C4F2EB9-4F76-4C14-A4E5-56E448185E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C4F2EB9-4F76-4C14-A4E5-56E448185E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B83CB7BA-EABC-49DC-8927-DD0945256C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B83CB7BA-EABC-49DC-8927-DD0945256C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B83CB7BA-EABC-49DC-8927-DD0945256C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B83CB7BA-EABC-49DC-8927-DD0945256C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E45049F-75C6-4411-8B6E-F683CD4FB784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E45049F-75C6-4411-8B6E-F683CD4FB784}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E45049F-75C6-4411-8B6E-F683CD4FB784}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E45049F-75C6-4411-8B6E-F683CD4FB784}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

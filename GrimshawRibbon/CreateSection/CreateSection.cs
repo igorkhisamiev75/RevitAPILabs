@@ -11,7 +11,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 #endregion
 
-namespace GrimshawRibbon3
+namespace CreateSection
 {
     [Transaction(TransactionMode.Manual)]
     public class CreateSection : IExternalCommand
