@@ -53,6 +53,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GenerateFloorByRoom\GenerateFloorByRoom.csproj">
+      <Project>{4e45049f-75c6-4411-8b6e-f683cd4fb784}</Project>
+      <Name>GenerateFloorByRoom</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Util\Util.csproj">
       <Project>{c634da34-5d75-434f-a13b-5eec10f97261}</Project>
       <Name>Util</Name>

@@ -7,6 +7,7 @@ using System.Drawing;
 using Autodesk.Revit;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using Autodesk.Revit.DB.Architecture;
 
 namespace GenerateFloorByRoom
 {
@@ -150,10 +151,12 @@ namespace GenerateFloorByRoom
             UIDocument doc = commandData.Application.ActiveUIDocument;
             m_document = doc.Document;
             ElementSet es = new ElementSet();
+
             foreach (ElementId elementId in doc.Selection.GetElementIds())
             {
                 es.Insert(doc.Document.GetElement(elementId));
             }
+
             ElementSet walls = WallFilter(es);
             m_creApp = commandData.Application.Application.Create;
             Profile = m_creApp.NewCurveArray();
@@ -410,5 +413,8 @@ namespace GenerateFloorByRoom
 
             throw new InvalidOperationException("The selected walls should be closed.");
         }
+
+
+       
     }
 }
