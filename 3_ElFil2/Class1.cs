@@ -1,22 +1,15 @@
-﻿#region Namespaces
+﻿
+#region Namespaces
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-
-
 using System.Linq;
-using System.Drawing;
-using GenerateFloorByRoom;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.DB.Architecture;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
-
 
 using Util;
 #endregion
@@ -40,33 +33,11 @@ namespace GrimshawRibbon
         // Member variables 
         Application _app;
         Document _doc;
-        List<Room> projectRooms = new List<Room>();   // a list to store all rooms in the project
 
-        private Hashtable m_floorTypes;
-        private List<string> m_floorTypesName;
-        private FloorType m_floorType;
-        private Level m_level;
-        private CurveArray m_profile;
-        private bool m_structural;
-        //private System.Drawing.PointF[] m_points;
-        private double m_maxLength;
-        private const double PRECISION = 0.00000001;
-        private Autodesk.Revit.Creation.Application m_creApp;
-        private Document m_document;
-
-        public FloorType FloorType
-        {
-            get
-            {
-                return m_floorType;
-            }
-            set
-            {
-                m_floorType = value;
-            }
-        }
-
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        public Result Execute(
+          ExternalCommandData commandData,
+          ref string message,
+          ElementSet elements)
         {
             // Get the access to the top most objects. 
             UIApplication uiApp = commandData.Application;
@@ -74,226 +45,30 @@ namespace GrimshawRibbon
             _app = uiApp.Application;
             _doc = uiDoc.Document;
 
-            // Get the Revit document
-            //Autodesk.Revit.DB.Document _doc = application.ActiveUIDocument.Document;
+            // (1) In eailer lab, CommandData command, we 
+            // learned how to access to the wallType. i.e., 
+            // here we'll take a look at more on the topic 
+            // of accessing to elements in the interal rvt 
+            // project database. 
 
-            // Get the application creation object
-            //Autodesk.Revit.Creation.Application appCreation = _app.Create;
-
-            //// Get a floor type for floor creation
-            FilteredElementCollector collector = new FilteredElementCollector(_doc);
-            collector.OfClass(typeof(FloorType));
-            FloorType floorType = collector.FirstElement() as FloorType;
-
-            // Build a floor profile for the floor creation
-            XYZ first = new XYZ(0, 0, 0);
-            XYZ second = new XYZ(20, 0, 0);
-            XYZ third = new XYZ(20, 19, 0);
-            XYZ fourth = new XYZ(0, 15, 0);
-            CurveArray curves = new CurveArray();
-            curves.Append(Line.CreateBound(first, second));
-            curves.Append(Line.CreateBound(second, third));
-            curves.Append(Line.CreateBound(third, fourth));
-            curves.Append(Line.CreateBound(fourth, first));
-
-            // The normal vector (0,0,1) that must be perpendicular to the profile.
-            XYZ normal = XYZ.BasisZ;
-
-            Level level1 = (Level)ElementFiltering.FindElement(_doc, typeof(Level), "Level 1", null);
-
-            //using (Transaction transaction = new Transaction(_doc))
-            //{
-            //    transaction.Start("Create ");
-
-            //    _doc.Create.NewFloor(curves, floorType, level1, true);
-            //    transaction.Commit();
-            //}
-
-
-            using (Transaction transaction = new Transaction(_doc))
-            {
-                transaction.Start("Create ");
-
-                NewMethod(floorType, curves, level1);
-                transaction.Commit();
-            }
-
-
-            //ListFamilyTypes(); //поиск всех типов в проекте
-
-            //ListRoom();
-
-
-
-
+            ListFamilyTypes();
 
             // (2) List instances of specific object class. 
-            //ListInstances(); //поиск всех экземляров
+            ListInstances();
 
-            //// (3) Find a specific family type. 
-            //FindFamilyType();
+            // (3) Find a specific family type. 
+            FindFamilyType();
 
-            ////FindFamilyType_Wall_v2("Базовая стена", "Generic - 200mm");
+            // (4) Find specific instances, including filtering by parameters. 
+            FindInstance();
 
+            // (5) List all elements. 
+            ListAllElements();
 
-            //// (4) Find specific instances, including filtering by parameters. 
-            //FindInstance();
-
-            //// (5) List all elements. 
-            //ListAllElements();
-
-
-            //Level level1 = (Level)FindElement(_doc, typeof(Level), "Level 1", null);
-
-
-            //IList<Element> walls = FindInstancesOfType(typeof(Wall), idWallType, null);
-            //IList<Element> doors = FindInstancesOfType(typeof(FamilyInstance), idDoorType, BuiltInCategory.OST_Doors);
+            // We are done. 
 
             return Result.Succeeded;
         }
-
-        private void NewMethod(FloorType floorType, CurveArray curves, Level level1)
-        {
-            RoomFilter filter = new RoomFilter();
-
-            FilteredElementCollector collector = new FilteredElementCollector(_doc);
-            IList<Element> rooms = collector.WherePasses(filter).ToElements();
-
-            int n = rooms.Count();
-
-            foreach (Room room in rooms)
-            {
-                IList<IList<BoundarySegment>> segments = room.GetBoundarySegments(new SpatialElementBoundaryOptions());
-
-                CurveArray roomsCurves = new CurveArray(); // Array to hold curv data collected from room boundreis
-                roomsCurves.Clear();
-
-                SpatialElementBoundaryOptions bo = new SpatialElementBoundaryOptions();
-                SketchPlane sp = _doc.ActiveView.SketchPlane;
-
-                foreach (IList<BoundarySegment> lstBs in room.GetBoundarySegments(bo))
-                {
-                    foreach (BoundarySegment bs in lstBs)
-                    {
-                        roomsCurves.Append(bs.GetCurve());
-                    }
-
-                }
-                _doc.Create.NewFloor(roomsCurves, floorType, level1, false);
-
-            }
-
-            //_doc.Create.NewFloor(curves, floorType, level1, true);
-        }
-
-
-
-        /*public Floor CreateFloor(UIApplication application, Level level) //метод который создает пол по координатам
-        {
-            // Get the Revit document
-            Autodesk.Revit.DB.Document document = application.ActiveUIDocument.Document;
-
-            // Get the application creation object
-            Autodesk.Revit.Creation.Application appCreation = application.Application.Create;
-
-            // Get a floor type for floor creation
-            FilteredElementCollector collector = new FilteredElementCollector(document);
-            collector.OfClass(typeof(FloorType));
-            FloorType floorType = collector.FirstElement() as FloorType;
-
-            // Build a floor profile for the floor creation
-            XYZ first = new XYZ(0, 0, 0);
-            XYZ second = new XYZ(20, 0, 0);
-            XYZ third = new XYZ(20, 15, 0);
-            XYZ fourth = new XYZ(0, 15, 0);
-            CurveArray cerve = new CurveArray();
-            cerve.Append(Line.CreateBound(first, second));
-            cerve.Append(Line.CreateBound(second, third));
-            cerve.Append(Line.CreateBound(third, fourth));
-            cerve.Append(Line.CreateBound(fourth, first));
-
-            //получить кривую из помещения и передать в метод NewFloor
-
-
-
-            // The normal vector (0,0,1) that must be perpendicular to the profile.
-            XYZ normal = XYZ.BasisZ;
-
-            return document.Create.NewFloor(cerve, floorType, level, true, normal);
-        }*/
-
-        /*  public List<Room> ListRoom()
-          {
-              RoomFilter filter = new RoomFilter();
-
-              // Apply the filter to the elements in the active document
-              FilteredElementCollector collector = new FilteredElementCollector(_doc);
-              IList<Element> rooms = collector.WherePasses(filter).ToElements();
-
-
-
-              int n = rooms.Count();
-
-              string s = string.Empty;
-              //int n = 0;
-
-
-              foreach (Room room in rooms)
-              {
-                  IList<IList<BoundarySegment>> segments = room.GetBoundarySegments(new SpatialElementBoundaryOptions());
-
-                  CurveArray roomsCurves = new CurveArray(); // Array to hold curv data collected from room boundreis
-
-                  ////var floorType = _doc.GetDefaultElementTypeId(ElementTypeGroup.FloorType);
-                  //FloorType floorType = new FilteredElementCollector(_doc)
-                  //.OfClass(typeof(FloorType))
-                  //.First<Element>(e => e.Name.Equals("Generic 150mm\"")) as FloorType;
-
-                  SpatialElementBoundaryOptions bo = new SpatialElementBoundaryOptions();
-                  SketchPlane sp = _doc.ActiveView.SketchPlane;
-
-                  foreach (IList<BoundarySegment> lstBs in room.GetBoundarySegments(bo))
-                  {
-                      foreach (BoundarySegment bs in lstBs)
-                      {
-                          roomsCurves.Append(bs.GetCurve());
-                      }
-
-                  }
-                  _doc.Create.NewFloor(roomsCurves, floorType, room.Level, false);
-
-
-                  //s += "\r\n" + room.ToString() + ":" + room.Name;
-                  //++n;
-              }
-
-              TaskDialog.Show("ПОБЕДА", "Перекрытия сделаны");
-              //TaskDialog.Show(n.ToString() + " помещений:", s);
-
-              //FilteredElementIdIterator roomIter =
-              //    (new FilteredElementCollector(_doc)).WherePasses(filter).GetElementIdIterator();
-              //roomIter.Reset();
-
-              //// try to find all the Rooms in the Project and add it to the List
-              //while (roomIter.MoveNext())
-              //{
-              //    object obj = roomIter.Current;
-
-              //    // find all Rooms on Condition IsLocatedOnLevel
-              //    Room tmpRoom = obj as Room;
-              //    if (null != tmpRoom && null != _doc.GetElement(tmpRoom.LevelId))
-              //    {
-              //        projectRooms.Add(tmpRoom);
-              //        continue;
-              //    }
-              //}
-
-
-
-
-              return projectRooms;
-
-          }*/
 
         /// <summary>
         /// List the family types 
@@ -306,10 +81,14 @@ namespace GrimshawRibbon
             // properties that allows us to directly access to the types. 
             // e.g., _doc.WallTypes 
 
-            FilteredElementCollector wallTypes = new FilteredElementCollector(_doc).OfClass(typeof(WallType)); //ищут стены
+            //WallTypeSet wallTypes = _doc.WallTypes; // 2013
+
+
+            FilteredElementCollector wallTypes
+              = new FilteredElementCollector(_doc) // 2014
+                .OfClass(typeof(WallType));
             int n = wallTypes.Count();
 
-            
             string s = string.Empty;
             //int n = 0;
 
@@ -318,13 +97,17 @@ namespace GrimshawRibbon
                 s += "\r\n" + wType.Kind.ToString() + " : " + wType.Name;
                 //++n;
             }
-            TaskDialog.Show(n.ToString() + " Wall Types:", s);
+            TaskDialog.Show(n.ToString()
+              + " Wall Types:",
+              s);
 
             // (1.1) Same idea applies to other system family, such as Floors, Roofs. 
 
             //FloorTypeSet floorTypes = _doc.FloorTypes;
 
-            FilteredElementCollector floorTypes = new FilteredElementCollector(_doc).OfClass(typeof(FloorType)); //перекрытия
+            FilteredElementCollector floorTypes
+            = new FilteredElementCollector(_doc) // 2014
+              .OfClass(typeof(FloorType));
 
             s = string.Empty;
 
@@ -333,7 +116,8 @@ namespace GrimshawRibbon
                 // Family name is not in the property for 
                 // floor, so use BuiltInParameter here. 
 
-                Parameter param = fType.get_Parameter(BuiltInParameter.SYMBOL_FAMILY_NAME_PARAM);
+                Parameter param = fType.get_Parameter(
+                  BuiltInParameter.SYMBOL_FAMILY_NAME_PARAM);
 
                 if (param != null)
                 {
@@ -341,7 +125,9 @@ namespace GrimshawRibbon
                 }
                 s += " : " + fType.Name + "\r\n";
             }
-            TaskDialog.Show(floorTypes.Count().ToString() + " floor types (by rvtDoc.FloorTypes): ", s);
+            TaskDialog.Show(
+              floorTypes.Count().ToString() + " floor types (by rvtDoc.FloorTypes): ",
+              s);
 
             // (1.2a) Another approach is to use a filter. here is an example with wall type. 
 
@@ -379,15 +165,6 @@ namespace GrimshawRibbon
             IList<Element> doorTypes = doorTypeCollector.ToElements();
 
             ShowElementList(doorTypes, "Door Types (by Filter): ");
-
-            //окна
-            var windiwsTypeCollector = new FilteredElementCollector(_doc);
-            windiwsTypeCollector.OfClass(typeof(FamilySymbol));
-            windiwsTypeCollector.OfCategory(BuiltInCategory.OST_Windows);
-            IList<Element> windowType = windiwsTypeCollector.ToElements();
-
-            ShowElementList(windowType, "Окна типы (по фильтру):");
-
         }
 
         /// <summary>
@@ -408,12 +185,6 @@ namespace GrimshawRibbon
             IList<Element> doorList = doorCollector.ToElements();
 
             ShowElementList(doorList, "Door Instance: ");
-
-            var winCollector = new FilteredElementCollector(_doc).OfClass(typeof(FamilyInstance));
-            winCollector.OfCategory(BuiltInCategory.OST_Windows);
-            IList<Element> winList = winCollector.ToElements();
-
-            ShowElementList(winList, "Окна:");
         }
 
         /// <summary>
@@ -546,10 +317,7 @@ namespace GrimshawRibbon
             //if (wallTypeList1.Count > 0)
             //  wallType1 = wallTypeList1[0]; // Found it. 
 
-           
             return wallType1;
-
-
         }
 
         /// <summary>
@@ -583,7 +351,9 @@ namespace GrimshawRibbon
         /// Find a specific family type for a wall, which is a system family. 
         /// Most efficient way to find a named family symbol: use a parameter filter.
         /// </summary>
-        public Element FindFamilyType_Wall_v3(string wallFamilyName, string wallTypeName)
+        public Element FindFamilyType_Wall_v3(
+          string wallFamilyName,
+          string wallTypeName)
         {
             ParameterValueProvider provider
               = new ParameterValueProvider(
@@ -844,7 +614,8 @@ namespace GrimshawRibbon
         {
             // Create an output file:
 
-            string filename = Path.Combine(Path.GetTempPath(), "RevitElements.txt");
+            string filename = Path.Combine(
+              Path.GetTempPath(), "RevitElements.txt");
 
             StreamWriter sw = new StreamWriter(filename);
 
@@ -856,9 +627,13 @@ namespace GrimshawRibbon
             // the same criteria; an arbitrary criterion 
             // could be chosen:
 
-            FilteredElementCollector collector  = new FilteredElementCollector(_doc).WhereElementIsElementType();
+            FilteredElementCollector collector
+              = new FilteredElementCollector(_doc)
+                .WhereElementIsElementType();
 
-            FilteredElementCollector collector2 = new FilteredElementCollector(_doc).WhereElementIsNotElementType();
+            FilteredElementCollector collector2
+              = new FilteredElementCollector(_doc)
+                .WhereElementIsNotElementType();
 
             collector.UnionWith(collector2);
 
@@ -1039,7 +814,11 @@ namespace GrimshawRibbon
         /// This gets handy when trying to find, for example, Level. 
         /// e.g., FindElement(_doc, GetType(Level), "Level 1") 
         /// </summary>
-        public static Element FindElement(Document rvtDoc, Type targetType, string targetName, Nullable<BuiltInCategory> targetCategory)
+        public static Element FindElement(
+          Document rvtDoc,
+          Type targetType,
+          string targetName,
+          Nullable<BuiltInCategory> targetCategory)
         {
             // Find a list of elements using the overloaded method. 
             IList<Element> elems = FindElements(rvtDoc, targetType, targetName, targetCategory);
