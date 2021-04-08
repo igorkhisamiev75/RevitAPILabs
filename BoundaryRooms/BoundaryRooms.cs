@@ -119,23 +119,22 @@ namespace GrimshawRibbon
             XYZ normal = XYZ.BasisZ;
 
             //уровень 1
-            FilteredElementCollector COllector = new FilteredElementCollector(_doc).OfClass(typeof(Level));
-            var ele = from Element in COllector where Element.Name == "Level 1" select Element;
-            Level lev = ele.Cast<Level>().ElementAt<Level>(0);
+            //FilteredElementCollector COllector = new FilteredElementCollector(_doc).OfClass(typeof(Level));
+            //var ele = from Element in COllector where Element.Name == "Level 1" select Element;
+            //Level lev = ele.Cast<Level>().ElementAt<Level>(0);
 
             //Get room's
-            FilteredElementCollector newRoomFilter = new FilteredElementCollector(_doc);
-            ICollection<Element> allRooms = newRoomFilter.OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType().ToElements();
+            //FilteredElementCollector newRoomFilter = new FilteredElementCollector(_doc);
+            //ICollection<Element> allRooms = newRoomFilter.OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType().ToElements();
 
-            //Get room's2
+            //Get room's 
             RoomFilter filter = new RoomFilter();
             // Apply the filter to the elements in the active document
             FilteredElementCollector collector3 = new FilteredElementCollector(_doc);
             IList<Element> rooms = collector3.WherePasses(filter).ToElements();
 
-            int roomCount = rooms.Count();
 
-            for (int i=0; i < roomCount; i++)
+            for (int i=0; i < rooms.Count; i++)
             {
                 CurveArray roomsCurves = new CurveArray();
                 var r1 = (Room)rooms[i];
@@ -150,8 +149,6 @@ namespace GrimshawRibbon
                 {
                     foreach (IList<BoundarySegment> segmentList in segments2)
                     {
-
-
                         foreach (BoundarySegment boundarySegment in segmentList)
                         {
                             Curve c = boundarySegment.GetCurve();
@@ -166,11 +163,13 @@ namespace GrimshawRibbon
                     transaction.Start("Create ");
                     try
                     {
-                        _doc.Create.NewFloor(temp, floorType, r1.Level, true);
+
+                        _doc.Create.NewFloor(temp, floorType, r1.Level, false);
+                        
                     }
                     catch
                     {
-                        TaskDialog.Show("У тебя не получилось", "Ты не красавчик!☺☺☺");
+                        TaskDialog.Show("Ошибка", "Ты не красавчик!☺☺☺");
                     }
                     transaction.Commit();
                 }
@@ -199,7 +198,7 @@ namespace GrimshawRibbon
                 temCurve = GetNext(lines, temp, temCurve);
 
                 if (Math.Abs(temp.X - temCurve.GetEndPoint(0).X) < PRECISION
-                    && Math.Abs(temp.Y - temCurve.GetEndPoint(0).Y) < PRECISION)
+                 && Math.Abs(temp.Y - temCurve.GetEndPoint(0).Y) < PRECISION)
                 {
                     temp = temCurve.GetEndPoint(1);
                 }
@@ -210,6 +209,7 @@ namespace GrimshawRibbon
 
                 Profile.Append(temCurve);
             }
+
         }
         private Curve GetNext(CurveArray profile, XYZ connected, Curve line)
         {
@@ -219,18 +219,26 @@ namespace GrimshawRibbon
                 {
                     continue;
                 }
-                if ((Math.Abs(c.GetEndPoint(0).X - line.GetEndPoint(1).X) < PRECISION && Math.Abs(c.GetEndPoint(0).Y - line.GetEndPoint(1).Y) < PRECISION && Math.Abs(c.GetEndPoint(0).Z - line.GetEndPoint(1).Z) < PRECISION)
-                    && (Math.Abs(c.GetEndPoint(1).X - line.GetEndPoint(0).X) < PRECISION && Math.Abs(c.GetEndPoint(1).Y - line.GetEndPoint(0).Y) < PRECISION && Math.Abs(c.GetEndPoint(1).Z - line.GetEndPoint(0).Z) < PRECISION)
-                    && 2 != profile.Size)
+                if ((Math.Abs(c.GetEndPoint(0).X - line.GetEndPoint(1).X) < PRECISION && 
+                    Math.Abs(c.GetEndPoint(0).Y - line.GetEndPoint(1).Y) < PRECISION && 
+                    Math.Abs(c.GetEndPoint(0).Z - line.GetEndPoint(1).Z) < PRECISION) && 
+                    (Math.Abs(c.GetEndPoint(1).X - line.GetEndPoint(0).X) < PRECISION && 
+                    Math.Abs(c.GetEndPoint(1).Y - line.GetEndPoint(0).Y) < PRECISION && 
+                    Math.Abs(c.GetEndPoint(1).Z - line.GetEndPoint(0).Z) < PRECISION) && 
+                    2 != profile.Size)
                 {
                     continue;
                 }
 
-                if (Math.Abs(c.GetEndPoint(0).X - connected.X) < PRECISION && Math.Abs(c.GetEndPoint(0).Y - connected.Y) < PRECISION && Math.Abs(c.GetEndPoint(0).Z - connected.Z) < PRECISION)
+                if (Math.Abs(c.GetEndPoint(0).X - connected.X) < PRECISION && 
+                    Math.Abs(c.GetEndPoint(0).Y - connected.Y) < PRECISION && 
+                    Math.Abs(c.GetEndPoint(0).Z - connected.Z) < PRECISION)
                 {
                     return c;
                 }
-                else if (Math.Abs(c.GetEndPoint(1).X - connected.X) < PRECISION && Math.Abs(c.GetEndPoint(1).Y - connected.Y) < PRECISION && Math.Abs(c.GetEndPoint(1).Z - connected.Z) < PRECISION)
+                else if (Math.Abs(c.GetEndPoint(1).X - connected.X) < PRECISION && 
+                         Math.Abs(c.GetEndPoint(1).Y - connected.Y) < PRECISION && 
+                         Math.Abs(c.GetEndPoint(1).Z - connected.Z) < PRECISION)
                 {
                     if (c.GetType().Name.Equals("Line"))
                     {
@@ -252,7 +260,7 @@ namespace GrimshawRibbon
             throw new InvalidOperationException("The Room Boundary should be closed.");
         }
 
-        public IList<IList<BoundarySegment>> GetInfo_BoundarySegment(Room room)
+        /*public IList<IList<BoundarySegment>> GetInfo_BoundarySegment(Room room)
         {
             IList<IList<BoundarySegment>> segments = room.GetBoundarySegments(new SpatialElementBoundaryOptions());
 
@@ -286,7 +294,7 @@ namespace GrimshawRibbon
             }
 
             return segments;
-        }
+        }*/
 
     }
 }
