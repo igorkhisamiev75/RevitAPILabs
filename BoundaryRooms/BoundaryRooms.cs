@@ -31,7 +31,6 @@ namespace GrimshawRibbon
         private List<string> floorTypesName;
         private FloorType floorType;
         private Level level;
-        
         private bool structural;
         
         private Autodesk.Revit.Creation.Application creApp;
@@ -109,7 +108,6 @@ namespace GrimshawRibbon
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             _app = uiApp.Application;
             _doc = uiDoc.Document;
-
             creApp = commandData.Application.Application.Create;
 
             //// Get a floor type for floor creation
@@ -129,49 +127,54 @@ namespace GrimshawRibbon
             FilteredElementCollector newRoomFilter = new FilteredElementCollector(_doc);
             ICollection<Element> allRooms = newRoomFilter.OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType().ToElements();
 
+            //Get room's2
             RoomFilter filter = new RoomFilter();
             // Apply the filter to the elements in the active document
             FilteredElementCollector collector3 = new FilteredElementCollector(_doc);
             IList<Element> rooms = collector3.WherePasses(filter).ToElements();
 
-            CurveArray roomsCurves = new CurveArray();
+            int roomCount = rooms.Count();
 
-            var r1 = (Room)rooms[0];
-
-            SpatialElementBoundaryOptions bo = new SpatialElementBoundaryOptions();
-            IList<IList<BoundarySegment>> segments2 = r1.GetBoundarySegments(bo);
-
-
-            CurveArray temp = new CurveArray();
-
-            if (null != segments2)
+            for (int i=0; i < roomCount; i++)
             {
-                foreach (IList<BoundarySegment> segmentList in segments2)
-                {
-                    
+                CurveArray roomsCurves = new CurveArray();
+                var r1 = (Room)rooms[i];
 
-                    foreach (BoundarySegment boundarySegment in segmentList)
+                SpatialElementBoundaryOptions bo = new SpatialElementBoundaryOptions();
+                IList<IList<BoundarySegment>> segments2 = r1.GetBoundarySegments(bo);
+
+
+                CurveArray temp = new CurveArray();
+
+                if (null != segments2)
+                {
+                    foreach (IList<BoundarySegment> segmentList in segments2)
                     {
-                        Curve c = boundarySegment.GetCurve();
-                        temp.Append(c);
+
+
+                        foreach (BoundarySegment boundarySegment in segmentList)
+                        {
+                            Curve c = boundarySegment.GetCurve();
+                            temp.Append(c);
+                        }
+                        SortCurves(temp);
                     }
-                    SortCurves(temp);
+                }
+
+                using (Transaction transaction = new Transaction(_doc))
+                {
+                    transaction.Start("Create ");
+                    try
+                    {
+                        _doc.Create.NewFloor(temp, floorType, r1.Level, true);
+                    }
+                    catch
+                    {
+                        TaskDialog.Show("У тебя не получилось", "Ты не красавчик!☺☺☺");
+                    }
+                    transaction.Commit();
                 }
             }
-
-            using (Transaction transaction = new Transaction(_doc))
-            {
-                transaction.Start("Create ");
-
-                _doc.Create.NewFloor(temp, floorType, lev, true);
-                transaction.Commit();
-            }
-
-            //SketchPlane sp = _doc.ActiveView.SketchPlane;
-
-
-            //var a = GetInfo_BoundarySegment((Room)rooms[0]);
-
 
 
             TaskDialog.Show("У тебя получилось", "Ты красавчик!☺☺☺");
