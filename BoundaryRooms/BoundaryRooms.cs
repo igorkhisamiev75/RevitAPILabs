@@ -27,14 +27,14 @@ namespace GrimshawRibbon
         Document _doc;
         private const double PRECISION = 0.00000001;
         private CurveArray profile;
-        private Hashtable floorTypes;
+        //private Hashtable floorTypes;
         private List<string> floorTypesName;
         private FloorType floorType;
         private Level level;
         private bool structural;
         
         private Autodesk.Revit.Creation.Application creApp;
-        private Document document;
+        //private Document document;
 
         // a floor type to be used by the new floor instead of the default type
         public FloorType FloorType
@@ -147,32 +147,36 @@ namespace GrimshawRibbon
 
                 if (null != segments2)
                 {
-                    foreach (IList<BoundarySegment> segmentList in segments2)
+                    IList<BoundarySegment> segmentList = segments2[0];
+
+
+                    foreach (BoundarySegment boundarySegment in segmentList)
                     {
-                        foreach (BoundarySegment boundarySegment in segmentList)
-                        {
-                            Curve c = boundarySegment.GetCurve();
-                            temp.Append(c);
-                        }
-                        SortCurves(temp);
+                        Curve c = boundarySegment.GetCurve();
+                        temp.Append(c);
                     }
+                    SortCurves(temp);
+
                 }
 
-                using (Transaction transaction = new Transaction(_doc))
+                using (Transaction t = new Transaction(_doc))
                 {
-                    transaction.Start("Create ");
+                    t.Start("Create floor");
                     try
                     {
 
-                        _doc.Create.NewFloor(temp, floorType, r1.Level, false);
-                        
+                       Floor sourr=_doc.Create.NewFloor(temp, floorType, r1.Level, false);//create floor            
+                        //_doc.Regenerate();
+                        //var opening = _doc.Create.NewOpening(sourr, temp, true); //create opening
                     }
                     catch
                     {
                         TaskDialog.Show("Ошибка", "Ты не красавчик!☺☺☺");
                     }
-                    transaction.Commit();
+                    t.Commit();
+
                 }
+
             }
 
 
@@ -184,7 +188,7 @@ namespace GrimshawRibbon
 
         private void SortCurves(CurveArray lines)
         {
-            XYZ temp = lines.get_Item(0).GetEndPoint(1);
+            XYZ pointCurves = lines.get_Item(0).GetEndPoint(1);
             Curve temCurve = lines.get_Item(0);
 
             
@@ -195,16 +199,16 @@ namespace GrimshawRibbon
             while (Profile.Size != lines.Size)
             {
 
-                temCurve = GetNext(lines, temp, temCurve);
+                temCurve = GetNext(lines, pointCurves, temCurve);
 
-                if (Math.Abs(temp.X - temCurve.GetEndPoint(0).X) < PRECISION
-                 && Math.Abs(temp.Y - temCurve.GetEndPoint(0).Y) < PRECISION)
+                if (Math.Abs(pointCurves.X - temCurve.GetEndPoint(0).X) < PRECISION
+                 && Math.Abs(pointCurves.Y - temCurve.GetEndPoint(0).Y) < PRECISION)
                 {
-                    temp = temCurve.GetEndPoint(1);
+                    pointCurves = temCurve.GetEndPoint(1);
                 }
                 else
                 {
-                    temp = temCurve.GetEndPoint(0);
+                    pointCurves = temCurve.GetEndPoint(0);
                 }
 
                 Profile.Append(temCurve);
@@ -295,6 +299,20 @@ namespace GrimshawRibbon
 
             return segments;
         }*/
+
+        /*
+             //if (null != segments2)
+             //{
+             //    foreach (IList<BoundarySegment> segmentList in segments2)
+             //    {
+             //        foreach (BoundarySegment boundarySegment in segmentList)
+             //        {
+             //            Curve c = boundarySegment.GetCurve();
+             //            temp.Append(c);
+             //        }
+             //        SortCurves(temp);
+             //    }
+             //}*/
 
     }
 }
