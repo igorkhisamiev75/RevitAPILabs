@@ -17,7 +17,7 @@ using Autodesk.Revit.UI.Selection;
 
 #endregion
 
-namespace GrimshawRibbon
+namespace GrimshawRibbon.BoundaryRooms.CS
 {
     [Transaction(TransactionMode.Manual)]
     //[RegenerationAttribute(RegenerationOption.Manual)]
