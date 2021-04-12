@@ -32,9 +32,9 @@ namespace GrimshawRibbon
         private FloorType floorType;
         private Level level;
         private bool structural;
-        
+
         private Autodesk.Revit.Creation.Application creApp;
-        //private Document document;
+
 
         // a floor type to be used by the new floor instead of the default type
         public FloorType FloorType
@@ -110,31 +110,80 @@ namespace GrimshawRibbon
             _doc = uiDoc.Document;
             creApp = commandData.Application.Application.Create;
 
-            //// Get a floor type for floor creation
-            FilteredElementCollector collector = new FilteredElementCollector(_doc);
-            collector.OfClass(typeof(FloorType));
-            FloorType floorType = collector.FirstElement() as FloorType;
 
-            // The normal vector (0,0,1) that must be perpendicular to the profile.
-            XYZ normal = XYZ.BasisZ;
+            using (Transaction t = new Transaction(_doc))
+            {
+                t.Start("Create floor");
+                CreateFloorInRooms();
+                TaskDialog.Show("У тебя получилось", "Ты красавчик!☺☺☺");
+                t.Commit();
 
-            //уровень 1
-            //FilteredElementCollector COllector = new FilteredElementCollector(_doc).OfClass(typeof(Level));
-            //var ele = from Element in COllector where Element.Name == "Level 1" select Element;
-            //Level lev = ele.Cast<Level>().ElementAt<Level>(0);
+                t.Start();
 
-            //Get room's
-            //FilteredElementCollector newRoomFilter = new FilteredElementCollector(_doc);
-            //ICollection<Element> allRooms = newRoomFilter.OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType().ToElements();
+                CreateFloorOpenings();
 
-            //Get room's 
-            RoomFilter filter = new RoomFilter();
-            // Apply the filter to the elements in the active document
-            FilteredElementCollector collector3 = new FilteredElementCollector(_doc);
-            IList<Element> rooms = collector3.WherePasses(filter).ToElements();
+                var res = t.Commit();
 
+            }
 
-            for (int i=0; i < rooms.Count; i++)
+            return Result.Succeeded;
+
+        }
+
+        private void CreateFloorOpenings()
+        {
+
+            FloorType floorType;
+            IList<Element> rooms;
+            GetRoomInProject(out rooms);
+
+            // List all the wall instances 
+            var floorCollector = new FilteredElementCollector(_doc).OfClass(typeof(Floor));
+            IList<Element> floorList = floorCollector.ToElements();
+
+            for (int i = 0; i < rooms.Count; i++)
+            {
+                CurveArray roomsCurves = new CurveArray();
+                var r1 = (Room)rooms[i];
+                var f1 = (Floor)floorList[i];
+
+                SpatialElementBoundaryOptions bo = new SpatialElementBoundaryOptions();
+                IList<IList<BoundarySegment>> segments2 = r1.GetBoundarySegments(bo);
+
+                CurveArray temp = new CurveArray();
+
+                if (null != segments2)
+                {
+                    for (int j = 1; j < segments2.Count; j++)
+                    {
+                        IList<BoundarySegment> segmentList = segments2[j];
+
+                        foreach (BoundarySegment boundarySegment in segmentList)
+                        {
+                            Curve c = boundarySegment.GetCurve();
+                            temp.Append(c);
+                        }
+                        SortCurves(temp);
+                        var opening = _doc.Create.NewOpening(f1, temp, true); //create opening
+                    }
+
+                }
+
+            }
+
+        }
+
+        private void CreateFloorInRooms()
+        {
+            FloorType floorType;
+            IList<Element> rooms;
+            floorType = GetFloorTypeInProject();
+            Floor sourr;
+            Floor sourr2;
+
+            GetRoomInProject(out rooms);
+
+            for (int i = 0; i < rooms.Count; i++)
             {
                 CurveArray roomsCurves = new CurveArray();
                 var r1 = (Room)rooms[i];
@@ -156,34 +205,41 @@ namespace GrimshawRibbon
                         temp.Append(c);
                     }
                     SortCurves(temp);
-
+                    sourr = _doc.Create.NewFloor(temp, floorType, r1.Level, false);
+                    
                 }
 
-                using (Transaction t = new Transaction(_doc))
-                {
-                    t.Start("Create floor");
-                    try
-                    {
-
-                       Floor sourr=_doc.Create.NewFloor(temp, floorType, r1.Level, false);//create floor            
-                        //_doc.Regenerate();
-                        //var opening = _doc.Create.NewOpening(sourr, temp, true); //create opening
-                    }
-                    catch
-                    {
-                        TaskDialog.Show("Ошибка", "Ты не красавчик!☺☺☺");
-                    }
-                    t.Commit();
-
-                }
+                
+              
+                
 
             }
 
 
-            TaskDialog.Show("У тебя получилось", "Ты красавчик!☺☺☺");
+        }
 
-            return Result.Succeeded;
+        private void GetRoomInProject(out IList<Element> rooms)
+        {
 
+
+            // The normal vector (0,0,1) that must be perpendicular to the profile.
+            //XYZ normal = XYZ.BasisZ;
+
+            //Get room's 
+            RoomFilter filter = new RoomFilter();
+            // Apply the filter to the elements in the active document
+            FilteredElementCollector collector3 = new FilteredElementCollector(_doc);
+            rooms = collector3.WherePasses(filter).ToElements();
+        }
+
+        private FloorType GetFloorTypeInProject()
+        {
+            FloorType floorType;
+            //// Get a floor type for floor creation
+            FilteredElementCollector collector = new FilteredElementCollector(_doc);
+            collector.OfClass(typeof(FloorType));
+            floorType = collector.FirstElement() as FloorType;
+            return floorType;
         }
 
         private void SortCurves(CurveArray lines)
@@ -191,7 +247,7 @@ namespace GrimshawRibbon
             XYZ pointCurves = lines.get_Item(0).GetEndPoint(1);
             Curve temCurve = lines.get_Item(0);
 
-            
+
             Profile = creApp.NewCurveArray();
 
             Profile.Append(temCurve);
@@ -223,31 +279,31 @@ namespace GrimshawRibbon
                 {
                     continue;
                 }
-                if ((Math.Abs(c.GetEndPoint(0).X - line.GetEndPoint(1).X) < PRECISION && 
-                    Math.Abs(c.GetEndPoint(0).Y - line.GetEndPoint(1).Y) < PRECISION && 
-                    Math.Abs(c.GetEndPoint(0).Z - line.GetEndPoint(1).Z) < PRECISION) && 
-                    (Math.Abs(c.GetEndPoint(1).X - line.GetEndPoint(0).X) < PRECISION && 
-                    Math.Abs(c.GetEndPoint(1).Y - line.GetEndPoint(0).Y) < PRECISION && 
-                    Math.Abs(c.GetEndPoint(1).Z - line.GetEndPoint(0).Z) < PRECISION) && 
+                if ((Math.Abs(c.GetEndPoint(0).X - line.GetEndPoint(1).X) < PRECISION &&
+                    Math.Abs(c.GetEndPoint(0).Y - line.GetEndPoint(1).Y) < PRECISION &&
+                    Math.Abs(c.GetEndPoint(0).Z - line.GetEndPoint(1).Z) < PRECISION) &&
+                    (Math.Abs(c.GetEndPoint(1).X - line.GetEndPoint(0).X) < PRECISION &&
+                    Math.Abs(c.GetEndPoint(1).Y - line.GetEndPoint(0).Y) < PRECISION &&
+                    Math.Abs(c.GetEndPoint(1).Z - line.GetEndPoint(0).Z) < PRECISION) &&
                     2 != profile.Size)
                 {
                     continue;
                 }
 
-                if (Math.Abs(c.GetEndPoint(0).X - connected.X) < PRECISION && 
-                    Math.Abs(c.GetEndPoint(0).Y - connected.Y) < PRECISION && 
+                if (Math.Abs(c.GetEndPoint(0).X - connected.X) < PRECISION &&
+                    Math.Abs(c.GetEndPoint(0).Y - connected.Y) < PRECISION &&
                     Math.Abs(c.GetEndPoint(0).Z - connected.Z) < PRECISION)
                 {
                     return c;
                 }
-                else if (Math.Abs(c.GetEndPoint(1).X - connected.X) < PRECISION && 
-                         Math.Abs(c.GetEndPoint(1).Y - connected.Y) < PRECISION && 
+                else if (Math.Abs(c.GetEndPoint(1).X - connected.X) < PRECISION &&
+                         Math.Abs(c.GetEndPoint(1).Y - connected.Y) < PRECISION &&
                          Math.Abs(c.GetEndPoint(1).Z - connected.Z) < PRECISION)
                 {
                     if (c.GetType().Name.Equals("Line"))
                     {
                         XYZ start = c.GetEndPoint(1);
-                       XYZ end = c.GetEndPoint(0);
+                        XYZ end = c.GetEndPoint(0);
                         return Line.CreateBound(start, end);
                     }
                     else if (c.GetType().Name.Equals("Arc"))
@@ -264,55 +320,7 @@ namespace GrimshawRibbon
             throw new InvalidOperationException("The Room Boundary should be closed.");
         }
 
-        /*public IList<IList<BoundarySegment>> GetInfo_BoundarySegment(Room room)
-        {
-            IList<IList<BoundarySegment>> segments = room.GetBoundarySegments(new SpatialElementBoundaryOptions());
-
-            if (null != segments)  //the room may not be bound
-            {
-                string message = "BoundarySegment";
-                foreach (IList<BoundarySegment> segmentList in segments)
-                {
-                    foreach (BoundarySegment boundarySegment in segmentList)
-                    {
-
-                        // Get curve start point
-                        message += "\nCurve start point: (" + boundarySegment.GetCurve().GetEndPoint(0).X + ","
-                                       + boundarySegment.GetCurve().GetEndPoint(0).Y + "," +
-                                      boundarySegment.GetCurve().GetEndPoint(0).Z + ")";
-                        // Get curve end point
-                        message += ";\nCurve end point: (" + boundarySegment.GetCurve().GetEndPoint(1).X + ","
-                             + boundarySegment.GetCurve().GetEndPoint(1).Y + "," +
-                             boundarySegment.GetCurve().GetEndPoint(1).Z + ")";
-                        // Get document path name
-                        message += ";\nDocument path name: " + room.Document.PathName;
-                        // Get boundary segment element name
-                        if (boundarySegment.ElementId != ElementId.InvalidElementId)
-                        {
-                            message += ";\nElement name: " + room.Document.GetElement(boundarySegment.ElementId).Name;
-                        }
-                    }
-                }
-                TaskDialog.Show("Revit", message);
-
-            }
-
-            return segments;
-        }*/
-
-        /*
-             //if (null != segments2)
-             //{
-             //    foreach (IList<BoundarySegment> segmentList in segments2)
-             //    {
-             //        foreach (BoundarySegment boundarySegment in segmentList)
-             //        {
-             //            Curve c = boundarySegment.GetCurve();
-             //            temp.Append(c);
-             //        }
-             //        SortCurves(temp);
-             //    }
-             //}*/
-
     }
+
 }
+

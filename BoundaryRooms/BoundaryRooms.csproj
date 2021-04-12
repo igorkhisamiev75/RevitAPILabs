@@ -41,6 +41,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,7 +52,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoundaryRooms.cs" />
+    <Compile Include="CreateFloorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateFloorForm.Designer.cs">
+      <DependentUpon>CreateFloorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CreateFloorForm.resx">
+      <DependentUpon>CreateFloorForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
