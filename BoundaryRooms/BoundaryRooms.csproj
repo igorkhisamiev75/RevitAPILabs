@@ -53,18 +53,18 @@
   <ItemGroup>
     <Compile Include="BoundaryRooms.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="CreateFloorForm.cs">
+    <Compile Include="RoomInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateFloorForm.Designer.cs">
-      <DependentUpon>CreateFloorForm.cs</DependentUpon>
+    <Compile Include="RoomInfoForm.Designer.cs">
+      <DependentUpon>RoomInfoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoomsData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CreateFloorForm.resx">
-      <DependentUpon>CreateFloorForm.cs</DependentUpon>
+    <EmbeddedResource Include="RoomInfoForm.resx">
+      <DependentUpon>RoomInfoForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

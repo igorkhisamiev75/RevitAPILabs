@@ -10,7 +10,7 @@ using Autodesk.Revit.DB.Architecture;
 
 namespace GrimshawRibbon.BoundaryRooms.CS
 {
-    public partial class CreateFloorForm : System.Windows.Forms.Form
+    public partial class roomsInformationForm : System.Windows.Forms.Form
     {
         #region Class member variables
         RoomsData m_data; // Room's data for current active document
@@ -20,7 +20,7 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         /// <summary>
         /// constructor
         /// </summary>
-        public CreateFloorForm()
+        public roomsInformationForm()
         {
             InitializeComponent();
         }
@@ -29,10 +29,14 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         /// Overload the constructor
         /// </summary>
         /// <param name="data">an instance of Data class</param>
-        public CreateFloorForm(RoomsData data)
+        public roomsInformationForm(RoomsData data)
         {
             m_data = data;
             InitializeComponent();
+
+
+
+
         }
 
         private void DisplayRooms(ReadOnlyCollection<Room> roomList, bool isHaveTag)
@@ -106,6 +110,24 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             // display the total area of each department
             this.DisplayDartmentsInfo();
 
+            //if all the rooms have tags, the button will be set to disable
+            //if (0 == m_data.RoomsWithoutTag.Count)
+            //{
+            //    addTagsButton.Enabled = false;
+            //}
+        }
+
+        /// <summary>
+        /// create room tags for the rooms which are lack of tags
+        /// </summary>
+        private void addTagButton_Click(object sender, EventArgs e)
+        {
+            m_data.CreateTags();
+
+            roomsListView.Items.Clear();
+            this.DisplayRooms(m_data.RoomsWithTag, true);
+            this.DisplayRooms(m_data.RoomsWithoutTag, false);
+
             // if all the rooms have tags ,the button will be set to disable
             //if (0 == m_data.RoomsWithoutTag.Count)
             //{
@@ -113,24 +135,65 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             //}
         }
 
+        /// <summary>
+        /// reorder rooms' number
+        /// </summary>
+        private void reorderButton_Click(object sender, EventArgs e)
+        {
+            m_data.ReorderRooms();
+
+            // refresh the listview
+            roomsListView.Items.Clear();
+            this.DisplayRooms(m_data.RoomsWithTag, true);
+            this.DisplayRooms(m_data.RoomsWithoutTag, false);
+        }
+
         private void DisplayDartmentsInfo()
         {
             for (int i = 0; i < m_data.DepartmentInfos.Count; i++)
             {
-                // create a listview item
+                //create a listview item
                 ListViewItem tmpItem = new ListViewItem(m_data.DepartmentInfos[i].DepartmentName);
                 tmpItem.SubItems.Add(m_data.DepartmentInfos[i].RoomsAmount.ToString());
                 tmpItem.SubItems.Add(m_data.DepartmentInfos[i].DepartmentAreaValue.ToString() +
                                      " SF");
-                //departmentsListView.Items.Add(tmpItem);
+               // departmentsListView.Items.Add(tmpItem);
             }
         }
 
+        /// <summary>
+        /// Save the information into an Excel file
+        /// </summary>
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            // create a save file dialog
+            using (SaveFileDialog sfdlg = new SaveFileDialog())
+            {
+                sfdlg.Title = "Export area of department to Excel file";
+                sfdlg.Filter = "CSV(command delimited)(*.csv)|*.csv";
+                sfdlg.RestoreDirectory = true;
+
+                if (DialogResult.OK == sfdlg.ShowDialog())
+                {
+                    m_data.ExportFile(sfdlg.FileName);
+                }
+            }
+        }
 
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
 
         }
+
+        private void btnCreateFloor_Click(object sender, EventArgs e)
+        {
+            
+           
+
+        }
+
+       
+    
     }
 }

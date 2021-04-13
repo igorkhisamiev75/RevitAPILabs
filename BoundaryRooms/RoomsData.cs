@@ -22,6 +22,8 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         List<RoomTag> m_roomTags = new List<RoomTag>(); // a list to store all room tags
         List<Room> m_roomsWithTag = new List<Room>();   // a list to store all rooms with tag
         List<Room> m_roomsWithoutTag = new List<Room>(); // a list to store all rooms without tag
+
+        List<Floor> m_floor = new List<Floor>();  // a list to store all type floors in the project
         // a list to store the information of departments
         List<DepartmentInfo> m_departmentInfos = new List<DepartmentInfo>();
         #endregion
@@ -104,6 +106,14 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                 return new ReadOnlyCollection<Room>(m_rooms);
             }
         }
+
+        //public ReadOnlyCollection<Room> Floors
+        //{
+        //    get
+        //    {
+        //        return new ReadOnlyCollection<Room>(m_floors);
+        //    }
+        //}
 
 
         /// <summary>
@@ -357,8 +367,7 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             RoomTagFilter roomTagFilter = new RoomTagFilter();
             LogicalOrFilter orFilter = new LogicalOrFilter(roomFilter, roomTagFilter);
 
-            FilteredElementIterator elementIterator =
-                (new FilteredElementCollector(document)).WherePasses(orFilter).GetElementIterator();
+            FilteredElementIterator elementIterator = (new FilteredElementCollector(document)).WherePasses(orFilter).GetElementIterator();
             elementIterator.Reset();
 
             // try to find all the rooms and room tags in the project and add to the list
@@ -382,6 +391,17 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                     continue;
                 }
             }
+        }
+
+        private void GetAllTypesFloors()
+        {
+            //add wall types to combo box wallTypesComboBox
+            Document document = m_revit.ActiveUIDocument.Document;
+            FilteredElementCollector filteredElementCollector = new FilteredElementCollector(document);
+            filteredElementCollector.OfClass(typeof(WallType));
+            foreach (Element element in filteredElementCollector);
+            
+
         }
 
 

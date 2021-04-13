@@ -8,7 +8,7 @@ using Autodesk.Revit;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
-namespace BoundaryRooms
+namespace GrimshawRibbon.BoundaryRooms.CS
 {
     /// <summary>
     /// To add an external command to Autodesk Revit, 
@@ -46,7 +46,7 @@ namespace BoundaryRooms
                 RoomsData data = new RoomsData(commandData);
 
                 // create a form to display the information of rooms
-                using (CreateFloorForm infoForm = new CreateFloorForm(data))
+                using (roomsInformationForm infoForm = new roomsInformationForm(data))
                 {
                     infoForm.ShowDialog();
                 }

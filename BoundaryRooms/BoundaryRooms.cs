@@ -119,7 +119,6 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                 t.Commit();
 
                 t.Start();
-
                 CreateFloorOpenings();
 
                 var res = t.Commit();

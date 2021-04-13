@@ -1,7 +1,7 @@
 ﻿
 namespace GrimshawRibbon.BoundaryRooms.CS
 {
-    partial class CreateFloorForm
+    partial class roomsInformationForm
     {
         /// <summary>
         /// Required designer variable.
@@ -32,8 +32,9 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             this.btnCreateFloor = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.roomsListView = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader0 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnSetFloor = new System.Windows.Forms.Button();
@@ -49,9 +50,11 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             this.btnCreateFloor.TabIndex = 0;
             this.btnCreateFloor.Text = "Create Floors in Rooms";
             this.btnCreateFloor.UseVisualStyleBackColor = true;
+            this.btnCreateFloor.Click += new System.EventHandler(this.btnCreateFloor_Click);
             // 
             // btnCancel
             // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Location = new System.Drawing.Point(1498, 51);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(178, 73);
@@ -63,45 +66,50 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             // roomsListView
             // 
             this.roomsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2,
+            this.columnHeader0,
             this.columnHeader1,
+            this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4});
             this.roomsListView.FullRowSelect = true;
             this.roomsListView.GridLines = true;
             this.roomsListView.HideSelection = false;
-            this.roomsListView.Location = new System.Drawing.Point(28, 51);
-            this.roomsListView.MultiSelect = false;
+            this.roomsListView.Location = new System.Drawing.Point(32, 51);
             this.roomsListView.Name = "roomsListView";
-            this.roomsListView.Size = new System.Drawing.Size(1228, 1136);
+            this.roomsListView.Size = new System.Drawing.Size(1230, 1162);
             this.roomsListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.roomsListView.TabIndex = 5;
             this.roomsListView.UseCompatibleStateImageBehavior = false;
             this.roomsListView.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader2
+            // columnHeader0
             // 
-            this.columnHeader2.Text = "Number";
-            this.columnHeader2.Width = 99;
+            this.columnHeader0.Text = "ID";
+            this.columnHeader0.Width = 105;
             // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "Name";
-            this.columnHeader1.Width = 387;
+            this.columnHeader1.Width = 213;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Number";
+            this.columnHeader2.Width = 158;
             // 
             // columnHeader3
             // 
             this.columnHeader3.Text = "Level";
-            this.columnHeader3.Width = 96;
+            this.columnHeader3.Width = 193;
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "Area";
-            this.columnHeader4.Width = 213;
+            this.columnHeader4.Text = "Type Floor";
+            this.columnHeader4.Width = 198;
             // 
             // btnSetFloor
             // 
-            this.btnSetFloor.Location = new System.Drawing.Point(1375, 395);
+            this.btnSetFloor.Location = new System.Drawing.Point(1379, 399);
             this.btnSetFloor.Name = "btnSetFloor";
             this.btnSetFloor.Size = new System.Drawing.Size(182, 78);
             this.btnSetFloor.TabIndex = 3;
@@ -111,11 +119,11 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1304, 270);
+            this.label1.Location = new System.Drawing.Point(1304, 279);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 25);
+            this.label1.Size = new System.Drawing.Size(106, 25);
             this.label1.TabIndex = 4;
-            this.label1.Text = "Wall Type";
+            this.label1.Text = "Floor Type";
             // 
             // wallTypesComboBox
             // 
@@ -125,9 +133,8 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             this.wallTypesComboBox.Size = new System.Drawing.Size(331, 32);
             this.wallTypesComboBox.TabIndex = 5;
             // 
-            // CreateFloorForm
+            // roomsInformationForm
             // 
-            this.AcceptButton = this.btnCancel;
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
@@ -141,9 +148,10 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "CreateFloorForm";
+            this.Name = "roomsInformationForm";
             this.ShowInTaskbar = false;
-            this.Text = "CreateFloorForm";
+            this.Text = "Rooms information";
+            this.Load += new System.EventHandler(this.RoomInfoForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,11 +163,12 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.ListView roomsListView;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.Button btnSetFloor;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox wallTypesComboBox;
+        private System.Windows.Forms.ColumnHeader columnHeader0;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }
