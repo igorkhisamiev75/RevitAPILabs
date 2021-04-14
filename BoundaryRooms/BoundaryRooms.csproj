@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="BoundaryRooms.cs" />
     <Compile Include="Command.cs" />
+    <Compile Include="FloorsData.cs" />
     <Compile Include="RoomInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>

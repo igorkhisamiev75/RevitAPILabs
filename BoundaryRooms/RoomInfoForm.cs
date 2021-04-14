@@ -2,7 +2,7 @@
 using System.Data;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
-
+using System.Drawing;
 using Autodesk.Revit;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
@@ -34,9 +34,6 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             m_data = data;
             InitializeComponent();
 
-
-
-
         }
 
         private void DisplayRooms(ReadOnlyCollection<Room> roomList, bool isHaveTag)
@@ -54,41 +51,72 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                     continue;
                 }
 
-                int idValue = tmpRoom.Id.IntegerValue;
+                int idValue = tmpRoom.Id.IntegerValue; //id rooms
                 string roomId = idValue.ToString();
 
                 // create a list view Item
-                ListViewItem tmpItem = new ListViewItem(roomId);
-                tmpItem.SubItems.Add(tmpRoom.Name);       //display room name.
-                tmpItem.SubItems.Add(tmpRoom.Number);     //display room number.
+                ListViewItem tmpItem = new ListViewItem("");
                 tmpItem.SubItems.Add((tmpRoom.Document.GetElement(tmpRoom.LevelId) as Level).Name); //display the level
+                tmpItem.SubItems.Add(tmpRoom.Number);     //display room number.
+                tmpItem.SubItems.Add(tmpRoom.Name);       //display room name.
 
-                // get department name from Department property 
-                departmentName = m_data.GetProperty(tmpRoom, BuiltInParameter.ROOM_DEPARTMENT);
-                tmpItem.SubItems.Add(departmentName);
+                //tmpItem.SubItems.Add(tmpRoom.Area.ToString());       //display Area name.
 
-                // get property value 
-                propertyValue = m_data.GetProperty(tmpRoom, BuiltInParameter.ROOM_AREA);
+                //// get department name from Department property 
+                //departmentName = m_data.GetProperty(tmpRoom, BuiltInParameter.ROOM_DEPARTMENT);
+                //tmpItem.SubItems.Add(departmentName);
 
-                // get the area value
-                areaValue = Double.Parse(propertyValue);
-                tmpItem.SubItems.Add(propertyValue + " SF");
+                //// get property value  AREA
+                //propertyValue = m_data.GetProperty(tmpRoom, BuiltInParameter.ROOM_AREA);
 
-                // display whether the room with tag or not
-                if (isHaveTag)
-                {
-                    tmpItem.SubItems.Add("Yes");
-                }
-                else
-                {
-                    tmpItem.SubItems.Add("No");
-                }
+                //// get the area value
+                //areaValue = Double.Parse(propertyValue);
+                //tmpItem.SubItems.Add(propertyValue + " М2");
 
-                // add the item to the listview
+                //// display whether the room with tag or not
+                //if (isHaveTag)
+                //{
+                //    tmpItem.SubItems.Add("Yes");
+                //}
+                //else
+                //{
+                //    tmpItem.SubItems.Add("No");
+                //}
+
+                //// add the item to the listview
                 roomsListView.Items.Add(tmpItem);
+                
 
-                // add the area to the department
-                m_data.CalculateDepartmentArea(departmentName, areaValue);
+                //// add the area to the department
+                //m_data.CalculateDepartmentArea(departmentName, areaValue);
+            }
+        }
+
+        private void DisplayRooms2(ReadOnlyCollection<Room> roomList)
+        {
+            
+            // add rooms to the gridview
+            foreach (Room tmpRoom in roomList)
+            {
+                // make sure the room has Level, that's it locates at level.
+                if (tmpRoom.Document.GetElement(tmpRoom.LevelId) == null)
+                {
+                    continue;
+                }
+
+                // create a list view Item
+                ListViewItem tmpItem = new ListViewItem();
+                //tmpItem.SubItems.Add((tmpRoom.Document.GetElement(tmpRoom.LevelId) as Level).Name); //display the level
+                tmpItem.SubItems.Add(tmpRoom.Number);     //display room number.
+                //tmpItem.SubItems.Add(tmpRoom.Name);       //display room name.
+
+                roomsAndFloorsGridView.Rows.Add((tmpRoom.Document.GetElement(tmpRoom.LevelId) as Level).Name);
+                //roomsAndFloorsGridView.Columns.Add("123","31");
+                //roomsAndFloorsGridView.Rows.Add(tmpRoom.Number);
+                //Column2.DataGridView.Rows.Add(tmpRoom.Number);
+                //roomsAndFloorsGridView
+                //roomsListView.Items.Add(tmpItem);
+
             }
         }
 
@@ -108,13 +136,11 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             this.DisplayRooms(m_data.RoomsWithTag, true);
 
             // display the total area of each department
-            this.DisplayDartmentsInfo();
+            //this.DisplayDartmentsInfo();
 
-            //if all the rooms have tags, the button will be set to disable
-            //if (0 == m_data.RoomsWithoutTag.Count)
-            //{
-            //    addTagsButton.Enabled = false;
-            //}
+            this.DisplayRooms2(m_data.Rooms);
+
+           
         }
 
         /// <summary>
@@ -138,15 +164,15 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         /// <summary>
         /// reorder rooms' number
         /// </summary>
-        private void reorderButton_Click(object sender, EventArgs e)
-        {
-            m_data.ReorderRooms();
+        //private void reorderButton_Click(object sender, EventArgs e)
+        //{
+        //    m_data.ReorderRooms();
 
-            // refresh the listview
-            roomsListView.Items.Clear();
-            this.DisplayRooms(m_data.RoomsWithTag, true);
-            this.DisplayRooms(m_data.RoomsWithoutTag, false);
-        }
+        //    // refresh the listview
+        //    roomsListView.Items.Clear();
+        //    this.DisplayRooms(m_data.RoomsWithTag, true);
+        //    this.DisplayRooms(m_data.RoomsWithoutTag, false);
+        //}
 
         private void DisplayDartmentsInfo()
         {
@@ -154,9 +180,9 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             {
                 //create a listview item
                 ListViewItem tmpItem = new ListViewItem(m_data.DepartmentInfos[i].DepartmentName);
+
                 tmpItem.SubItems.Add(m_data.DepartmentInfos[i].RoomsAmount.ToString());
-                tmpItem.SubItems.Add(m_data.DepartmentInfos[i].DepartmentAreaValue.ToString() +
-                                     " SF");
+                tmpItem.SubItems.Add(m_data.DepartmentInfos[i].DepartmentAreaValue.ToString() +" SF");
                // departmentsListView.Items.Add(tmpItem);
             }
         }
@@ -164,21 +190,21 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         /// <summary>
         /// Save the information into an Excel file
         /// </summary>
-        private void exportButton_Click(object sender, EventArgs e)
-        {
-            // create a save file dialog
-            using (SaveFileDialog sfdlg = new SaveFileDialog())
-            {
-                sfdlg.Title = "Export area of department to Excel file";
-                sfdlg.Filter = "CSV(command delimited)(*.csv)|*.csv";
-                sfdlg.RestoreDirectory = true;
+        //private void exportButton_Click(object sender, EventArgs e)
+        //{
+        //    // create a save file dialog
+        //    using (SaveFileDialog sfdlg = new SaveFileDialog())
+        //    {
+        //        sfdlg.Title = "Export area of department to Excel file";
+        //        sfdlg.Filter = "CSV(command delimited)(*.csv)|*.csv";
+        //        sfdlg.RestoreDirectory = true;
 
-                if (DialogResult.OK == sfdlg.ShowDialog())
-                {
-                    m_data.ExportFile(sfdlg.FileName);
-                }
-            }
-        }
+        //        if (DialogResult.OK == sfdlg.ShowDialog())
+        //        {
+        //            m_data.ExportFile(sfdlg.FileName);
+        //        }
+        //    }
+        //}
 
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -193,7 +219,25 @@ namespace GrimshawRibbon.BoundaryRooms.CS
 
         }
 
-       
-    
+        private void roomsInformationForm_MouseEnter(object sender, EventArgs e)
+        {
+
+        }
+
+        System.Drawing.Point lastPoint;
+        private void roomsInformationForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                this.Left += e.X - lastPoint.X;
+                this.Top += e.Y - lastPoint.Y;
+            }
+
+        }
+
+        private void roomsInformationForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            lastPoint = new System.Drawing.Point(e.X, e.Y);
+        }
     }
 }

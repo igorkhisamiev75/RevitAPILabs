@@ -107,15 +107,6 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             }
         }
 
-        //public ReadOnlyCollection<Room> Floors
-        //{
-        //    get
-        //    {
-        //        return new ReadOnlyCollection<Room>(m_floors);
-        //    }
-        //}
-
-
         /// <summary>
         /// a list of all the room tags in the project
         /// </summary>
