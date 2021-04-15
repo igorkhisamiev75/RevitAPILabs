@@ -78,7 +78,7 @@ namespace GrimshawRibbon
            // SetElement(elem);
 
 
-            // ShowBasicElementInfo(elem);
+            ShowBasicElementInfo(elem);
 
             // (3) now, we are going to identify each major types of element.
             //IdentifyElement(elem);
@@ -87,14 +87,14 @@ namespace GrimshawRibbon
 
             // (4) first parameters.
 
-            // ShowParameters(elem, "Element Parameters: ");
+            ShowParameters(elem, "Element Parameters: ");
 
             // Check to see its type parameter as well
 
             ElementId elemTypeId = elem.GetTypeId();
             
             ElementType elemType = (ElementType)_doc.GetElement(elemTypeId); // since 2013
-           // ShowParameters(elemType, "Type Parameters: ");
+           ShowParameters(elemType, "Type Parameters: ");
 
             // Okay. we saw a set or parameters for a given element or element type.
             // How can we access to each parameters. For example, how can we get the value of "length" information?
@@ -488,13 +488,13 @@ namespace GrimshawRibbon
             return str;
         }
 
-        public void SetElement(Element e)
-        {
+        //public void SetElement(Element e)
+        //{
 
-            e.set_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set("API");
+        //    e.set_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set("API");
             
 
            
-        }
+        //}
     }
 }

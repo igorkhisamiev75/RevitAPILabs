@@ -136,7 +136,7 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             IList<Element> rooms;
             GetRoomInProject(out rooms);
 
-            // List all the wall instances 
+            // List all the floors instances 
             var floorCollector = new FilteredElementCollector(_doc).OfClass(typeof(Floor));
             IList<Element> floorList = floorCollector.ToElements();
 

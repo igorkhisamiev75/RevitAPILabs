@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -46,8 +45,10 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                 // create a new instance of class data
                 RoomsData data = new RoomsData(commandData);
 
+                FloorsData floorsData = new FloorsData(commandData);
+
                 // create a form to display the information of rooms
-                using (roomsInformationForm infoForm = new roomsInformationForm(data))
+                using (roomsInformationForm infoForm = new roomsInformationForm(data, commandData))
                 {
                     infoForm.ShowDialog();
                 }

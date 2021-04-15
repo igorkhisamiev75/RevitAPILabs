@@ -23,7 +23,6 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         List<Room> m_roomsWithTag = new List<Room>();   // a list to store all rooms with tag
         List<Room> m_roomsWithoutTag = new List<Room>(); // a list to store all rooms without tag
 
-        List<Floor> m_floor = new List<Floor>();  // a list to store all type floors in the project
         // a list to store the information of departments
         List<DepartmentInfo> m_departmentInfos = new List<DepartmentInfo>();
         #endregion
@@ -161,80 +160,80 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         /// <summary>
         /// create the room tags for the rooms which lack room tag
         /// </summary>
-        public void CreateTags()
-        {
-            try
-            {
-                foreach (Room tmpRoom in m_roomsWithoutTag)
-                {
-                    // get the location point of the room
-                    LocationPoint locPoint = tmpRoom.Location as LocationPoint;
-                    if (null == locPoint)
-                    {
-                        String roomId = "Room Id:  " + tmpRoom.Id.IntegerValue.ToString();
-                        String errMsg = roomId + "\r\nFault to create room tag," +
-                                                   "can't get the location point!";
-                        throw new Exception(errMsg);
-                    }
+        //public void CreateTags()
+        //{
+        //    try
+        //    {
+        //        foreach (Room tmpRoom in m_roomsWithoutTag)
+        //        {
+        //            // get the location point of the room
+        //            LocationPoint locPoint = tmpRoom.Location as LocationPoint;
+        //            if (null == locPoint)
+        //            {
+        //                String roomId = "Room Id:  " + tmpRoom.Id.IntegerValue.ToString();
+        //                String errMsg = roomId + "\r\nFault to create room tag," +
+        //                                           "can't get the location point!";
+        //                throw new Exception(errMsg);
+        //            }
 
-                    // create a instance of Autodesk.Revit.DB.UV class
-                    Autodesk.Revit.DB.UV point = new Autodesk.Revit.DB.UV(locPoint.Point.X, locPoint.Point.Y);
+        //            // create a instance of Autodesk.Revit.DB.UV class
+        //            Autodesk.Revit.DB.UV point = new Autodesk.Revit.DB.UV(locPoint.Point.X, locPoint.Point.Y);
 
-                    //create room tag
-                    RoomTag tmpTag;
-                    tmpTag = m_revit.ActiveUIDocument.Document.Create.NewRoomTag(new LinkElementId(tmpRoom.Id), point, null);
-                    if (null != tmpTag)
-                    {
-                        m_roomTags.Add(tmpTag);
-                    }
-                }
+        //            //create room tag
+        //            RoomTag tmpTag;
+        //            tmpTag = m_revit.ActiveUIDocument.Document.Create.NewRoomTag(new LinkElementId(tmpRoom.Id), point, null);
+        //            if (null != tmpTag)
+        //            {
+        //                m_roomTags.Add(tmpTag);
+        //            }
+        //        }
 
-                // classify rooms
-                ClassifyRooms();
+        //        // classify rooms
+        //        ClassifyRooms();
 
-                // display a message box
-                TaskDialog.Show("Revit", "Add room tags complete!");
-            }
-            catch (Exception exception)
-            {
-                TaskDialog.Show("Revit", exception.Message);
-            }
-        }
+        //        // display a message box
+        //        TaskDialog.Show("Revit", "Add room tags complete!");
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        TaskDialog.Show("Revit", exception.Message);
+        //    }
+        //}
 
 
         /// <summary>
         /// reorder all the rooms' number
         /// </summary>
-        public void ReorderRooms()
-        {
-            bool result = false;
+        //public void ReorderRooms()
+        //{
+        //    bool result = false;
 
-            // sort all the rooms by ascending order according their coordinate
-            result = this.SortRooms();
+        //    // sort all the rooms by ascending order according their coordinate
+        //    result = this.SortRooms();
 
-            // fault to reorder rooms' number
-            if (!result)
-            {
-                TaskDialog.Show("Revit", "Fault to reorder rooms' number,can't get location point!");
-                return;
-            }
+        //    // fault to reorder rooms' number
+        //    if (!result)
+        //    {
+        //        TaskDialog.Show("Revit", "Fault to reorder rooms' number,can't get location point!");
+        //        return;
+        //    }
 
-            // to avoid revit display the warning message,
-            // change the rooms' name to a temp name 
-            foreach (Room tmpRoom in m_rooms)
-            {
-                tmpRoom.Number += "XXX";
-            }
+        //    // to avoid revit display the warning message,
+        //    // change the rooms' name to a temp name 
+        //    foreach (Room tmpRoom in m_rooms)
+        //    {
+        //        tmpRoom.Number += "XXX";
+        //    }
 
-            // set the tag number of rooms in order
-            for (int i = 1; i <= m_rooms.Count; i++)
-            {
-                m_rooms[i - 1].Number = i.ToString();
-            }
+        //    // set the tag number of rooms in order
+        //    for (int i = 1; i <= m_rooms.Count; i++)
+        //    {
+        //        m_rooms[i - 1].Number = i.ToString();
+        //    }
 
-            // display a message box
-            TaskDialog.Show("Revit", "Reorder room's number complete!");
-        }
+        //    // display a message box
+        //    TaskDialog.Show("Revit", "Reorder room's number complete!");
+        //}
 
 
         /// <summary>
@@ -321,30 +320,30 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         /// export data into an Excel file
         /// </summary>
         /// <param name="fileName"></param>
-        public void ExportFile(String fileName)
-        {
-            // store all the information that to be exported
-            String allData = "";
+        //public void ExportFile(String fileName)
+        //{
+        //    // store all the information that to be exported
+        //    String allData = "";
 
-            // get the project title
-            String projectTitle = m_revit.ActiveUIDocument.Document.Title;  //the name of the project
-            allData += "Total Rooms area of " + projectTitle + "\r\n";
-            allData += "Department" + "," + "Rooms Amount" + "," + "Total Area" + "\r\n";
+        //    // get the project title
+        //    String projectTitle = m_revit.ActiveUIDocument.Document.Title;  //the name of the project
+        //    allData += "Total Rooms area of " + projectTitle + "\r\n";
+        //    allData += "Department" + "," + "Rooms Amount" + "," + "Total Area" + "\r\n";
 
-            foreach (DepartmentInfo tmp in m_departmentInfos)
-            {
-                allData += tmp.DepartmentName + "," + tmp.RoomsAmount +
-                                        "," + tmp.DepartmentAreaValue + " SF\r\n";
-            }
+        //    foreach (DepartmentInfo tmp in m_departmentInfos)
+        //    {
+        //        allData += tmp.DepartmentName + "," + tmp.RoomsAmount +
+        //                                "," + tmp.DepartmentAreaValue + " SF\r\n";
+        //    }
 
-            // save the information into a Excel file
-            if (0 < allData.Length)
-            {
-                System.IO.StreamWriter exportinfo = new System.IO.StreamWriter(fileName);
-                exportinfo.WriteLine(allData);
-                exportinfo.Close();
-            }
-        }
+        //    // save the information into a Excel file
+        //    if (0 < allData.Length)
+        //    {
+        //        System.IO.StreamWriter exportinfo = new System.IO.StreamWriter(fileName);
+        //        exportinfo.WriteLine(allData);
+        //        exportinfo.Close();
+        //    }
+        //}
 
 
         /// <summary>
@@ -383,18 +382,6 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                 }
             }
         }
-
-        private void GetAllTypesFloors()
-        {
-            //add wall types to combo box wallTypesComboBox
-            Document document = m_revit.ActiveUIDocument.Document;
-            FilteredElementCollector filteredElementCollector = new FilteredElementCollector(document);
-            filteredElementCollector.OfClass(typeof(WallType));
-            foreach (Element element in filteredElementCollector);
-            
-
-        }
-
 
         /// <summary>
         /// find out the rooms that without room tag
