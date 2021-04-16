@@ -7,6 +7,8 @@ using Autodesk.Revit;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GrimshawRibbon.BoundaryRooms.CS
 {
@@ -53,10 +55,11 @@ namespace GrimshawRibbon.BoundaryRooms.CS
             //add levels to combo box levelsComboBox
             Document document = m_commandData.Application.ActiveUIDocument.Document;
            
-
             // Get a floor type for floor creation
             FilteredElementCollector collector = new FilteredElementCollector(document);
             collector.OfClass(typeof(FloorType));
+            
+
             foreach (Element element in collector)
             {
                 FloorType floorType = element as FloorType;
@@ -68,11 +71,13 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                 //this.roomsAndFloorsGridView.Rows[0].Cells[3].Value = floorType;
                 //this.roomsAndFloorsGridView.Columns
                 this.floorsComboBox.Items.Add(floorType);
+               
             }
             if (this.floorsComboBox.Items.Count > 0 )
             {
                 this.floorsComboBox.DisplayMember = "Name";
                 this.floorsComboBox.SelectedIndex = 0;
+                //this.roomsAndFloorsGridView.Columns[3].Name = floorType.Name;
                 //this.roomsAndFloorsGridView.Columns4.DisplayMember = "Name";
                 //this.roomsAndFloorsGridView.Columns4.SelectedIndex = 0;
 
@@ -80,7 +85,16 @@ namespace GrimshawRibbon.BoundaryRooms.CS
         }
         private void DisplayRooms2(ReadOnlyCollection<Room> roomList)
         {
-            
+            //add levels to combo box levelsComboBox
+            Document document = m_commandData.Application.ActiveUIDocument.Document;
+
+
+            // Get a floor type for floor creation
+            FilteredElementCollector collector = new FilteredElementCollector(document);
+            collector.OfClass(typeof(FloorType));
+            List<ElementId> flooorList = new FilteredElementCollector(document)
+                .OfCategory(BuiltInCategory.OST_Floors).ToElementIds()
+                .ToList();
 
             int i = 1;
             // add rooms to the gridview
@@ -102,9 +116,12 @@ namespace GrimshawRibbon.BoundaryRooms.CS
                 roomsAndFloorsGridView.Rows.Add((tmpRoom.Document.GetElement(tmpRoom.LevelId) as Level).Name);
                 roomsAndFloorsGridView.Rows[i - 1].Cells[1].Value = tmpRoom.Number;
                 roomsAndFloorsGridView.Rows[i - 1].Cells[2].Value = tmpRoom.Name;
+                //roomsAndFloorsGridView.Rows[i - 1].Cells[3].Value = flooorList;
+
+                // roomsAndFloorsGridView.Rows[i - 1].Cells[3].Value = ("1", "2");
                 //roomsAndFloorsGridView.Rows[i - 1].Cells[3].Value = tmpItem.Text;//how get floor this
 
-               i++;
+                i++;
 
 
             }
@@ -131,8 +148,7 @@ namespace GrimshawRibbon.BoundaryRooms.CS
 
         private void btnCreateFloor_Click(object sender, EventArgs e)
         {
-            
-           
+          
 
         }
 
