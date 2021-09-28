@@ -72,5 +72,14 @@ namespace GenerateFloorByRoom
             m_data.Structural = structuralCheckBox.Checked;
         }
 
+        private void OK_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Cancel_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -161,7 +161,10 @@ namespace GenerateFloorByRoom
             m_creApp = commandData.Application.Application.Create;
             Profile = m_creApp.NewCurveArray();
 
-            FilteredElementIterator iter = (new FilteredElementCollector(doc.Document)).OfClass(typeof(FloorType)).GetElementIterator();
+            FilteredElementIterator iter = (new FilteredElementCollector(doc.Document))
+                .OfClass(typeof(FloorType))
+                .GetElementIterator();
+
             ObtainFloorTypes(iter);
             ObtainProfile(walls);
             ObtainLevel(walls);

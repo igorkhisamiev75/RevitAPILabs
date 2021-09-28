@@ -44,9 +44,11 @@ namespace GenerateFloorByRoom
             // previewGroupBox
             // 
             this.previewGroupBox.Controls.Add(this.previewPictureBox);
-            this.previewGroupBox.Location = new System.Drawing.Point(12, 12);
+            this.previewGroupBox.Location = new System.Drawing.Point(22, 22);
+            this.previewGroupBox.Margin = new System.Windows.Forms.Padding(6);
             this.previewGroupBox.Name = "previewGroupBox";
-            this.previewGroupBox.Size = new System.Drawing.Size(268, 242);
+            this.previewGroupBox.Padding = new System.Windows.Forms.Padding(6);
+            this.previewGroupBox.Size = new System.Drawing.Size(491, 447);
             this.previewGroupBox.TabIndex = 0;
             this.previewGroupBox.TabStop = false;
             this.previewGroupBox.Text = "Preview";
@@ -54,9 +56,10 @@ namespace GenerateFloorByRoom
             // previewPictureBox
             // 
             this.previewPictureBox.BackColor = System.Drawing.SystemColors.ControlText;
-            this.previewPictureBox.Location = new System.Drawing.Point(6, 19);
+            this.previewPictureBox.Location = new System.Drawing.Point(11, 35);
+            this.previewPictureBox.Margin = new System.Windows.Forms.Padding(6);
             this.previewPictureBox.Name = "previewPictureBox";
-            this.previewPictureBox.Size = new System.Drawing.Size(256, 208);
+            this.previewPictureBox.Size = new System.Drawing.Size(469, 384);
             this.previewPictureBox.TabIndex = 0;
             this.previewPictureBox.TabStop = false;
             this.previewPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.previewPictureBox_Paint);
@@ -65,9 +68,10 @@ namespace GenerateFloorByRoom
             // 
             this.floorTypesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.floorTypesComboBox.FormattingEnabled = true;
-            this.floorTypesComboBox.Location = new System.Drawing.Point(295, 52);
+            this.floorTypesComboBox.Location = new System.Drawing.Point(541, 96);
+            this.floorTypesComboBox.Margin = new System.Windows.Forms.Padding(6);
             this.floorTypesComboBox.Name = "floorTypesComboBox";
-            this.floorTypesComboBox.Size = new System.Drawing.Size(237, 21);
+            this.floorTypesComboBox.Size = new System.Drawing.Size(431, 32);
             this.floorTypesComboBox.TabIndex = 1;
             this.floorTypesComboBox.SelectionChangeCommitted += new System.EventHandler(this.floorTypesComboBox_SelectionChangeCommitted);
             // 
@@ -76,9 +80,10 @@ namespace GenerateFloorByRoom
             this.structuralCheckBox.AutoSize = true;
             this.structuralCheckBox.Checked = true;
             this.structuralCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.structuralCheckBox.Location = new System.Drawing.Point(295, 92);
+            this.structuralCheckBox.Location = new System.Drawing.Point(541, 170);
+            this.structuralCheckBox.Margin = new System.Windows.Forms.Padding(6);
             this.structuralCheckBox.Name = "structuralCheckBox";
-            this.structuralCheckBox.Size = new System.Drawing.Size(71, 17);
+            this.structuralCheckBox.Size = new System.Drawing.Size(121, 29);
             this.structuralCheckBox.TabIndex = 2;
             this.structuralCheckBox.Text = "Structural";
             this.structuralCheckBox.UseVisualStyleBackColor = true;
@@ -87,39 +92,44 @@ namespace GenerateFloorByRoom
             // OK
             // 
             this.OK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OK.Location = new System.Drawing.Point(376, 244);
+            this.OK.Location = new System.Drawing.Point(689, 450);
+            this.OK.Margin = new System.Windows.Forms.Padding(6);
             this.OK.Name = "OK";
-            this.OK.Size = new System.Drawing.Size(75, 23);
+            this.OK.Size = new System.Drawing.Size(138, 42);
             this.OK.TabIndex = 3;
             this.OK.Text = "&OK";
             this.OK.UseVisualStyleBackColor = true;
+            this.OK.Click += new System.EventHandler(this.OK_Click);
             // 
             // Cancel
             // 
             this.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Cancel.Location = new System.Drawing.Point(457, 244);
+            this.Cancel.Location = new System.Drawing.Point(838, 450);
+            this.Cancel.Margin = new System.Windows.Forms.Padding(6);
             this.Cancel.Name = "Cancel";
-            this.Cancel.Size = new System.Drawing.Size(75, 23);
+            this.Cancel.Size = new System.Drawing.Size(138, 42);
             this.Cancel.TabIndex = 3;
             this.Cancel.Text = "&Cancel";
             this.Cancel.UseVisualStyleBackColor = true;
+            this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
             // 
             // floorTypeLabel
             // 
             this.floorTypeLabel.AutoSize = true;
-            this.floorTypeLabel.Location = new System.Drawing.Point(292, 22);
+            this.floorTypeLabel.Location = new System.Drawing.Point(535, 41);
+            this.floorTypeLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.floorTypeLabel.Name = "floorTypeLabel";
-            this.floorTypeLabel.Size = new System.Drawing.Size(62, 13);
+            this.floorTypeLabel.Size = new System.Drawing.Size(116, 25);
             this.floorTypeLabel.TabIndex = 4;
             this.floorTypeLabel.Text = "Floor Types";
             // 
             // GenerateFloorForm
             // 
             this.AcceptButton = this.OK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.Cancel;
-            this.ClientSize = new System.Drawing.Size(544, 279);
+            this.ClientSize = new System.Drawing.Size(997, 515);
             this.Controls.Add(this.floorTypeLabel);
             this.Controls.Add(this.Cancel);
             this.Controls.Add(this.OK);
@@ -127,6 +137,7 @@ namespace GenerateFloorByRoom
             this.Controls.Add(this.floorTypesComboBox);
             this.Controls.Add(this.previewGroupBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GenerateFloorForm";
